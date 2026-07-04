@@ -35,5 +35,27 @@ def explore():
     print("UNIQUE BANKS:", df["issuer_bank"].nunique())
     print(df["issuer_bank"].unique()[:15])  # sample
 
+
+def validate_percentage_columns():
+    """
+    Confirms whether approved/BD/TD columns are percentages (summing to ~100)
+    or raw transaction counts. This determines how we label and interpret 
+    these columns in cleaning and analysis.
+    """
+    df = pd.read_csv(RAW_DATA_PATH)
+    df["check_sum"] = (
+        df["approved_transaction_volume"]
+        + df["business_decline_transactions"]
+        + df["technical_decline_transactions"]
+    )
+    print("=" * 50)
+    print("CHECK SUM STATS (approved + BD + TD):")
+    print(df["check_sum"].describe())
+    print("\nSample rows:")
+    print(df[["approved_transaction_volume", "business_decline_transactions",
+               "technical_decline_transactions", "check_sum"]].head())
+    
+
 if __name__ == "__main__":
     explore()
+    validate_percentage_columns()
